@@ -1,6 +1,10 @@
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 require "config.php";
-$res = $conn->query("SELECT * FROM attendance ORDER BY id DESC LIMIT 50");
+
 ?>
 <!DOCTYPE html>
 <html lang="th">
@@ -168,3 +172,4 @@ tr:hover{
 
 </body>
 </html>
+
