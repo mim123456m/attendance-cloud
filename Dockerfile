@@ -1,19 +1,22 @@
 FROM php:8.4-apache
 
-# ติดตั้ง MySQL extensions
+# Install MySQL extensions
 RUN docker-php-ext-install pdo pdo_mysql mysqli
 
-# เปิด mod rewrite
+# Enable Apache rewrite
 RUN a2enmod rewrite
 
-# copy source
+# Copy app
 COPY . /var/www/html/
-
-# copy start script
-COPY start.sh /start.sh
-RUN chmod +x /start.sh
 
 WORKDIR /var/www/html
 
-# ให้ container ใช้ start.sh
-CMD ["/start.sh"]
+# Railway uses PORT env
+ENV APACHE_RUN_USER www-data
+ENV APACHE_RUN_GROUP www-data
+ENV APACHE_LOG_DIR /var/log/apache2
+
+# Force Apache to listen on Railway PORT
+CMD sed -i "s/80/${PORT}/g" /etc/apache2/ports.conf \
+ && sed -i "s/:80/:${PORT}/g" /etc/apache2/sites-enabled/000-default.conf \
+ && apache2-foreground
