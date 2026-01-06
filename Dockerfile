@@ -5,10 +5,10 @@ RUN a2dismod mpm_event || true \
  && a2dismod mpm_worker || true \
  && a2dismod mpm_prefork || true
 
-# เปิดแค่ prefork ตัวเดียว
+# เปิดแค่ prefork
 RUN a2enmod mpm_prefork
 
-# PHP + MySQL
+# PHP extensions
 RUN docker-php-ext-install pdo pdo_mysql mysqli
 
 # rewrite
@@ -20,3 +20,4 @@ RUN sed -i 's/Listen 80/Listen 8080/' /etc/apache2/ports.conf \
 
 COPY . /var/www/html/
 WORKDIR /var/www/html
+
