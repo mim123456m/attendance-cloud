@@ -1,39 +1,26 @@
 <?php
 /* ===============================
-   Database Configuration (Railway)
+   Database Configuration (PDO + Railway)
 ================================ */
 
-// ===== Railway MySQL =====
-$host = "trolley.proxy.rlwy.net";   // จาก Railway
-$user = "root";                     // จาก Railway
-$pass = "QztuXhPPHVBhutpGgCOCflUlGWDvewgJ";   // 🔴 ใส่ของจริง
-$db   = "railway";                  // Railway ใช้ชื่อนี้
-$port = 44425;                      // สำคัญมาก
+$host = $_ENV['MYSQLHOST'] ?? getenv('MYSQLHOST');
+$user = $_ENV['MYSQLUSER'] ?? getenv('MYSQLUSER');
+$pass = $_ENV['MYSQLPASSWORD'] ?? getenv('MYSQLPASSWORD');
+$db   = $_ENV['MYSQLDATABASE'] ?? getenv('MYSQLDATABASE');
+$port = $_ENV['MYSQLPORT'] ?? getenv('MYSQLPORT');
 
-/* ===============================
-   Timezone (สำคัญกับ attendance)
-================================ */
 date_default_timezone_set("Asia/Bangkok");
 
-/* ===============================
-   Create Connection
-================================ */
-$conn = new mysqli($host, $user, $pass, $db, $port);
-
-/* ===============================
-   Error Handling
-================================ */
-if ($conn->connect_error) {
-  http_response_code(500);
-  die("❌ Database connection failed : " . $conn->connect_error);
+try {
+    $conn = new PDO(
+        "mysql:host=$host;port=$port;dbname=$db;charset=utf8mb4",
+        $user,
+        $pass,
+        [
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
+        ]
+    );
+} catch (PDOException $e) {
+    die("❌ DB ERROR: " . $e->getMessage());
 }
-
-/* ===============================
-   Charset (ภาษาไทย / Emoji)
-================================ */
-$conn->set_charset("utf8mb4");
-
-/* ===============================
-   Strict SQL Mode (องค์กรใช้จริง)
-================================ */
-$conn->query("SET sql_mode = 'STRICT_ALL_TABLES'");
