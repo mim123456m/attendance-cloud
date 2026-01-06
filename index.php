@@ -5,7 +5,11 @@ error_reporting(E_ALL);
 
 require "config.php";
 
+/* ===== QUERY ด้วย PDO ===== */
+$stmt = $conn->query("SELECT * FROM attendance ORDER BY id DESC LIMIT 50");
+$rows = $stmt->fetchAll();   // ดึงข้อมูลทั้งหมด
 ?>
+
 <!DOCTYPE html>
 <html lang="th">
 <head>
@@ -143,22 +147,23 @@ tr:hover{
           <th>วันเวลา</th>
         </tr>
 
-        <?php while($row = $res->fetch_assoc()): ?>
-        <tr>
-          <td><?= $row['id'] ?></td>
-          <td><?= $row['uid'] ?></td>
-          <td><?= $row['emp_code'] ?></td>
-          <td><?= $row['emp_name'] ?></td>
-          <td>
-            <?php if($row['action'] === 'IN'): ?>
-              <span class="badge in">เข้า (IN)</span>
-            <?php else: ?>
-              <span class="badge out">ออก (OUT)</span>
-            <?php endif; ?>
-          </td>
-          <td><?= $row['datetime'] ?></td>
-        </tr>
-        <?php endwhile; ?>
+<?php foreach ($rows as $row): ?>
+<tr>
+  <td><?= $row['id'] ?></td>
+  <td><?= $row['uid'] ?></td>
+  <td><?= $row['emp_code'] ?></td>
+  <td><?= $row['emp_name'] ?></td>
+  <td>
+    <?php if($row['action'] === 'IN'): ?>
+      <span class="badge in">เข้า (IN)</span>
+    <?php else: ?>
+      <span class="badge out">ออก (OUT)</span>
+    <?php endif; ?>
+  </td>
+  <td><?= $row['datetime'] ?></td>
+</tr>
+<?php endforeach; ?>
+
 
       </table>
     </div>
@@ -172,4 +177,5 @@ tr:hover{
 
 </body>
 </html>
+
 
